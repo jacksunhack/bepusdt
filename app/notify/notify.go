@@ -11,9 +11,29 @@ import (
 	"github.com/v03413/bepusdt/app/telegram"
 	"io"
 	"net/http"
+	"net/url"
 	"strings"
 	"time"
 )
+
+// getHTTPClient returns an HTTP client that may be configured to use Tor if enabled
+func getHTTPClient() *http.Client {
+	proxyURL := config.GetTorProxyURL()
+	if proxyURL != "" {
+		torProxy, err := url.Parse(proxyURL)
+		if err == nil {
+			return &http.Client{
+				Timeout: time.Second * 10,
+				Transport: &http.Transport{
+					Proxy: http.ProxyURL(torProxy),
+				},
+			}
+		}
+		log.Error("Failed to parse Tor proxy URL:", err)
+	}
+	
+	return &http.Client{Timeout: time.Second * 5}
+}
 
 func Handle(order model.TradeOrders) {
 	if order.ApiType == model.OrderApiTypeEpay {
@@ -26,7 +46,7 @@ func Handle(order model.TradeOrders) {
 }
 
 func epay(order model.TradeOrders) {
-	var client = http.Client{Timeout: time.Second * 5}
+	var client = getHTTPClient()
 	var notifyUrl = fmt.Sprintf("%s?%s", order.NotifyUrl, e.BuildNotifyParams(order))
 
 	postReq, err2 := http.NewRequest("GET", notifyUrl, nil)
@@ -111,7 +131,7 @@ func epusdt(order model.TradeOrders) {
 
 	// 再次序列化
 	jsonBody, err = json.Marshal(body)
-	var client = http.Client{Timeout: time.Second * 5}
+	var client = getHTTPClient()
 	var postReq, err2 = http.NewRequest("POST", order.NotifyUrl, strings.NewReader(string(jsonBody)))
 	if err2 != nil {
 		markNotifyFail(order, err.Error())
