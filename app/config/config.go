@@ -25,6 +25,7 @@ const defaultUsdtAtomicity = "0.01" // 原子精度
 const defaultTrxAtomicity = "0.01"
 const defaultTronGrpcNode = "18.141.79.38:50051"             // 默认GRPC节点
 const defaultPolygonRpcEndpoint = "https://polygon-rpc.com/" // 默认Polygon RPC节点
+const defaultTorProxyURL = ""     // 默认不使用Tor网络
 
 var runPath string
 
@@ -279,6 +280,14 @@ func GetInitWalletAddress() []string {
 	}
 
 	return []string{}
+}
+
+func GetTorProxyURL() string {
+	if data := help.GetEnv("TOR_PROXY_URL"); data != "" {
+		return strings.TrimSpace(data)
+	}
+
+	return defaultTorProxyURL
 }
 
 func parseAtomicity(data string) (decimal.Decimal, int, error) {

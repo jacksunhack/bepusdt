@@ -54,6 +54,7 @@ Bepusdt 所有参数都是以传递环境变量的方式进行配置，大部分
 | AUTH_TOKEN           | `123234`             | 认证Token，对接会用到这个参数                                                                                                                             |
 | LISTEN               | `:8080`              | 服务器HTTP监听地址                                                                                                                                   |
 | TRADE_IS_CONFIRMED   | `0`                  | 是否需要网络确认，禁用可以提高回调速度，启用则可以防止交易失败                                                                                                               |
+| TOR_PROXY_URL        | 空                    | Tor代理网址，例如：`socks5://127.0.0.1:9050`，设置此参数将通过Tor网络发送回调请求                                                                                      |
 | APP_URI              | 空                    | 应用访问地址，留空则系统自动获取，前端收银台会用到，建议设置，例如：https://token-pay.example.com                                                                               |
 | WALLET_ADDRESS       | 空                    | 启动时需要添加的钱包地址，多个请用半角符逗号`,`分开；当然，同样也支持通过机器人添加。                                                                                                  |
 | TG_BOT_TOKEN         | 空                    | Telegram Bot Token，**必须设置**，否则无法使用                                                                                                            |
